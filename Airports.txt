@@ -1,0 +1,6 @@
+Aberdeen,ABZ
+Belfast,BHD
+Dublin,DUB
+New York,JFK
+Shannon,SNN
+Venice,VCE
