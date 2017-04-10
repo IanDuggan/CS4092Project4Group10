@@ -11,7 +11,7 @@ public class CS4092Project4Group10
 	public static boolean triesToExit;
 	public static void main(String [] args) throws IOException
 	{
-		triesToExit=false;
+		triesToExit = false;
 		boolean readFile;
 		readFile = readFilesIntoArrayLists();
 		if (readFile)
@@ -97,11 +97,20 @@ public class CS4092Project4Group10
 		{
 			while (airportName != null && ((!(airportName.matches(pattern1))) || !airportFoundOrAdded))
 			{
-				airportName = JOptionPane.showInputDialog(null,"Enter the name of the airport you would like to add."); if(airportName != null) airportName = airportName.trim();
+				airportName = JOptionPane.showInputDialog(null,"Enter the name of the airport you would like to add."); 
+				if(airportName != null)
+				{
+					airportName = airportName.trim();
+				}	
 				while (airportName != null && (!(airportName.matches(pattern1))))
 				{
 					JOptionPane.showMessageDialog(null,"Invalid airport name selected. Please enter one or more words with spaces as long as you finish with a word.");
-					airportName = JOptionPane.showInputDialog(null,"Enter the name of the airport you would like to add."); if(airportName != null) airportName = airportName.trim();
+					airportName = JOptionPane.showInputDialog(null,"Enter the name of the airport you would like to add."); 
+					if(airportName != null) 
+					{
+						airportName = airportName.trim();
+					}
+						
 				}
 				if (airportName != null && airportName.matches(pattern1))
 				{
@@ -115,16 +124,26 @@ public class CS4092Project4Group10
 							airportFoundOrAdded = true;
 					}
 					in.close();
-					if (airportFoundOrAdded) {
+					if (airportFoundOrAdded)
+					{
 						JOptionPane.showMessageDialog(null, "The airport selected already exists.");
-					airportFoundOrAdded = false; }
+						airportFoundOrAdded = false; 
+					}
 					else
 					{		
-						airportCode = JOptionPane.showInputDialog(null,"Enter the code of the airport you would like to add."); if(airportCode != null) airportCode = airportCode.trim();
+						airportCode = JOptionPane.showInputDialog(null,"Enter the code of the airport you would like to add."); 
+						if(airportCode != null) 
+						{
+							airportCode = airportCode.trim();
+						}
 						while (airportCode != null && (!(airportCode.matches(pattern2))))
 						{
 							JOptionPane.showMessageDialog(null,"Invalid airport code selected. Please enter a three character long code with capital letters. eg BHD");
-							airportCode = JOptionPane.showInputDialog(null,"Enter the code of the airport you would like to add."); if(airportCode != null) airportCode = airportCode.trim();
+							airportCode = JOptionPane.showInputDialog(null,"Enter the code of the airport you would like to add.");
+							if(airportCode != null) 
+							{
+								airportCode = airportCode.trim();
+							}
 						}
 						if (airportName != null && airportCode != null)
 						{
@@ -134,8 +153,8 @@ public class CS4092Project4Group10
 							airportFoundOrAdded = true;
 							//bubbleSort("a");
 							writeToFile("a");
+							JOptionPane.showMessageDialog(null, "The airport '" + airportName + "' with code '" + airportCode + "' has successfully been added to the file.");
 						}
-						JOptionPane.showMessageDialog(null, "The airport '" + airportName + "' with code '" + airportCode + "' has successfully been added to the file.");
 					}
 				}
 			}
@@ -165,11 +184,19 @@ public class CS4092Project4Group10
 		{
 			while (airportCode != null && ((!(airportCode.matches(pattern2))) || !airportFoundOrEdited))
 			{
-				airportCode = JOptionPane.showInputDialog(null,"Enter the code of the airport you would like to edit."); if(airportCode != null) airportCode = airportCode.trim();
+				airportCode = JOptionPane.showInputDialog(null,"Enter the code of the airport you would like to edit."); 
+				if(airportCode != null)
+				{
+					airportCode = airportCode.trim();
+				}	
 				while (airportCode != null && (!(airportCode.matches(pattern2))))
 				{
-					JOptionPane.showMessageDialog(null,"Invalid airport code selected. Please enter the code capitalised and three-characters-long, eg 'BHD'.");
-					airportCode = JOptionPane.showInputDialog(null,"Enter the code of the airport you would like to add."); if(airportCode != null) airportCode = airportCode.trim();
+					JOptionPane.showMessageDialog(null,"Invalid airport code selected. Please enter the code capitalised and three characters long, eg 'BHD'.");
+					airportCode = JOptionPane.showInputDialog(null,"Enter the code of the airport you would like to add."); 
+					if(airportCode != null) 
+					{
+						airportCode = airportCode.trim();
+					}
 				}
 				if (airportCode != null && airportCode.matches(pattern2))
 				{
@@ -184,11 +211,19 @@ public class CS4092Project4Group10
 					}
 					if (airportFoundOrEdited)
 					{
-						airportName = JOptionPane.showInputDialog(null,"Enter the new name of the airport for code '" + airportCode + "'."); if(airportName != null) airportName = airportName.trim();
+						airportName = JOptionPane.showInputDialog(null,"Enter the new name of the airport for code '" + airportCode + "'."); 
+						if(airportName != null)
+						{
+							airportName = airportName.trim(); 
+						}							
 						while (airportName != null && (!(airportName.matches(pattern1))))
 						{
 							JOptionPane.showMessageDialog(null,"Invalid airport name selected. Please enter one or more words with spaces and end input with a word.");
-							airportName = JOptionPane.showInputDialog(null,"Enter the new name of the airport for code '" + airportCode + "'."); if(airportName != null) airportName = airportName.trim();
+							airportName = JOptionPane.showInputDialog(null,"Enter the new name of the airport for code '" + airportCode + "'."); 
+							if(airportName != null)
+							{
+								airportName = airportName.trim();
+							}								
 						}
 						if (airportName == null)
 						{
@@ -202,8 +237,8 @@ public class CS4092Project4Group10
 							airportFoundOrEdited = true;
 							//bubbleSort("a");
 							writeToFile("a");
+							JOptionPane.showMessageDialog(null, "The airport name of code '" + airportCode + "' has successfully been changed to '" + airportName + "'.");
 						}
-						JOptionPane.showMessageDialog(null, "The airport name of code '" + airportCode + "' has successfully been changed to '" + airportName + "'.");
 					}	
 					else
 					{		
@@ -230,7 +265,7 @@ public class CS4092Project4Group10
 		String inputs[] = {" flight code.", " start airport code.", " destination airport code.", " start time." + timeFormat,
 							" arrival time.", " days of travel." + daysFormat, " start date flight is active." + dateFormat, " end date flight is active." + dateFormat};
 		String flightDetails[] = new String[8];
-		int i=0;
+		int i = 0;
 		boolean valid = true;
 		
 		String input = " ";
@@ -238,23 +273,42 @@ public class CS4092Project4Group10
 		{
 			//Every input box
 			input = JOptionPane.showInputDialog(null, "Enter" + inputs[i]);
-			if(input != null) valid = validateDetail(i, input);
-			else triesToExit = true;
+			if (input != null)
+			{
+				valid = validateDetail(i, input);
+			}				
+			else
+			{
+				triesToExit = true;
+			}				
 			if(!valid)
 			{	//Loop for invalid input
 				while(input != null && !valid)
 				{
 					JOptionPane.showMessageDialog(null, "Invalid" + inputs[i] + " \nPlease try again.");
 					input = JOptionPane.showInputDialog(null, "Enter" + inputs[i]);
-					if(input != null) valid = validateDetail(i, input);
-					else triesToExit = true;
+					if(input != null) 
+					{
+						valid = validateDetail(i, input);
+					}
+					else
+					{
+						triesToExit = true;
+					}
 				}
 			} //Adds input to array
 			while(input != null && flightDetails[i] == null)
 			{
-				if(input != null) input = input.trim();
-				else triesToExit = true;
-				if(valid){
+				if(input != null)
+				{
+					input = input.trim();
+				}
+				else
+				{
+					triesToExit = true;
+				}
+				if(valid)
+				{
 					flightDetails[i] = input;
 				}
 			}
@@ -262,7 +316,8 @@ public class CS4092Project4Group10
 				i++;
 		}
 		//Assigns details to flight object, adds to arrayList and writes to file
-		if(input != null && flightDetails[7] != null && !triesToExit){
+		if(input != null && flightDetails[7] != null && !triesToExit)
+		{
 			Flight f = new Flight(flightDetails[0], flightDetails[1], flightDetails[2], flightDetails[3], flightDetails[4], flightDetails[5], flightDetails[6], flightDetails[7]);
 			flightsSorted.add(f);
 			writeToFile("f");
@@ -272,13 +327,87 @@ public class CS4092Project4Group10
 		//Determines where to go when user wants to exit
 		//Exiting from any point in the input menus bring up the first input menu 
 		//unless exiting from the first input menu.
-		if(triesToExit && i == 0){
+		if(triesToExit && i == 0)
+		{
 			triesToExit = false;
 			menu();
 		}
-		else if(triesToExit){
+		else if(triesToExit)
+		{
 			addFlight();
 		}
+	}
+	
+	public static void displayFlightDetails() throws IOException
+	{
+		String airportCode1 = "";
+		String airportCode2 = "";
+		String tempArray [];
+		boolean airportCode1Found = false;
+		boolean airportCode2Found = false;
+		String pattern = "[A-Z]{3}";
+		String input = "";
+		while ((airportCode1 != null && airportCode2 != null) && ((!(airportCode1.matches(pattern))) || (!(airportCode2.matches(pattern)))))
+		{
+			airportCode1 = JOptionPane.showInputDialog(null, "Please enter the code of the departing airport.");
+			while (airportCode1 != null && (!(airportCode1.matches(pattern))))
+			{
+				JOptionPane.showMessageDialog(null, "Invalid airport code selected. Please enter the code capitalised and three characters long, eg 'BHD'.");
+				airportCode1 = JOptionPane.showInputDialog(null, "Please enter the code of the departing airport.");
+			}
+			if (airportCode1 != null && airportCode2 != null && airportCode1.matches(pattern))
+			{
+				airportCode2 = JOptionPane.showInputDialog(null, "Please enter the code of the arriving airport.");
+				while (airportCode2 != null && (!(airportCode2.matches(pattern))))
+				{
+					JOptionPane.showMessageDialog(null, "Invalid airport code selected. Please enter the code capitalised and three characters long, eg 'BHD'.");
+					airportCode2 = JOptionPane.showInputDialog(null, "Please enter the code of the departing airport.");
+				}
+				if (airportCode2 == null)
+				{
+					airportCode2 = "";
+				}	
+				else if (airportCode2 != null && airportCode1.matches(pattern) && (airportCode2.matches(pattern)))
+				{
+					System.out.println("Entered if statement.");
+					for (int i = 0; i < airports.size() && !(airportCode1Found && airportCode2Found); i++) // Searching for the airports.
+					{
+						System.out.println(airports.get(i).getAirportCode());
+						if (airportCode1.equals(airports.get(i).getAirportCode()))
+						{
+							airportCode1Found = true;
+							System.out.println("Airport code 1 was found.");
+						}
+						if (airportCode2.equals(airports.get(i).getAirportCode()))
+						{
+							airportCode2Found = true;
+							System.out.println("Airport code 2 was found.");
+						}
+					}
+					if (airportCode1Found && airportCode2Found)
+					{
+						System.out.print("both codes were found.");
+						boolean bothFound = false;
+						String display = "";
+						display += "FNo.     Dep   Arr  DepT  ArrT   Days     DDate        ADate\n";
+						for (int i = 0; i < flights.size(); i++)
+						{
+							if (airportCode1.equals(flights.get(i).getDepartingAirport()) && airportCode2.equals(flights.get(i).getArrivingAirport()))
+							{
+								bothFound = true;
+								display += flights.get(i).toString() + "\n";
+							}
+						}
+						if (!bothFound)
+						{
+							display += "There are no records currently of any flights with the airports you entered.\n";
+						}
+						JOptionPane.showMessageDialog(null,display);
+					}
+				}
+			}
+		}
+		menu();
 	}
 	
 	//Gross validation
@@ -376,8 +505,7 @@ public class CS4092Project4Group10
 					addFlight();
 					break;
 				case 7:
-					//displayFlightDetails(args);
-					System.out.print("7");
+					displayFlightDetails();
 					break;
 				case 8:
 					//displayFlightDetailsDate(args);

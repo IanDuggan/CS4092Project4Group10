@@ -6,11 +6,11 @@ public class Flight
 	private String departureTime;
 	private String arrivalTime;
 	private String daysOfWeek;
-	private String departureDate;
-	private String arrivalDate;
+	private String startDate;
+	private String endDate;
 	
 	Flight(String aFlightNumber, String aDepartingAirport, String aArrivingAirport, String aDepartureTime, 
-		   String aArrivalTime, String aDaysOfWeek, String aDepartureDate, String aArrivalDate)
+		   String aArrivalTime, String aDaysOfWeek, String aStartDate, String aEndDate)
 	{
 	   flightNumber = aFlightNumber;
 	   departingAirport = aDepartingAirport;
@@ -18,8 +18,8 @@ public class Flight
 	   departureTime = aDepartureTime;
 	   arrivalTime = aArrivalTime;
 	   daysOfWeek = aDaysOfWeek;
-	   departureDate = aDepartureDate;
-	   arrivalDate = aArrivalDate;
+	   startDate = aStartDate;
+	   endDate = aEndDate;
 	}
 	
 	public String getFlightNumber()
@@ -82,24 +82,24 @@ public class Flight
 		daysOfWeek = aDaysOfWeek;
 	}
 	
-	public String getDepartureDate()
+	public String getStartDate()
 	{
-		return departureDate;
+		return startDate;
 	}
 	
-	public void setDeparureDate(String aDepartureDate)
+	public void setStartDate(String aStartDate)
 	{
-		departureDate = aDepartureDate;
+		startDate = aStartDate;
 	}
 	
-	public String getArrivalDate()
+	public String getEndDate()
 	{
-		return arrivalDate;
+		return endDate;
 	}
 	
-	public void setArrivalDate(String aArrivalDate)
+	public void setEndDate(String aEndDate)
 	{
-		arrivalDate = aArrivalDate;
+		endDate = aEndDate;
 	}
 	
 	@Override
@@ -107,6 +107,6 @@ public class Flight
 	{
     return (this.getFlightNumber() + "," + this.getDepartingAirport() + "," 
 			+ this.getArrivingAirport() + "," + this.getDepartureTime() + "," + this.getArrivalTime()
-			+ "," + this.getDaysOfWeek() + "," + this.getDepartureDate() + "," + this.getArrivalDate());
+			+ "," + this.getDaysOfWeek() + "," + this.getStartDate() + "," + this.getEndDate());
 	}
 }
