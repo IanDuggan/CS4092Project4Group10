@@ -410,6 +410,52 @@ public class CS4092Project4Group10
 		menu();
 	}
 	
+	
+	public static void deleteAFlight() throws IOException
+	{
+			
+			String flightCode = "";
+			boolean flightCodeFound = false;
+			String pattern = "([A-Z].*[0-9]+)|([0-9].*[A-Z]+)";
+			int index=0;
+			while ((flightCode != null) && ((!(flightCode.matches(pattern)))))
+			{
+				flightCode = JOptionPane.showInputDialog(null, "Please enter the flight code number.");
+				while (flightCode != null && (!(flightCode.matches(pattern))))
+				{
+					JOptionPane.showMessageDialog(null, "Invalid flight code selected. Please enter the code capitalised with two characters and 4 digits, eg 'EI3000'.");
+					flightCode = JOptionPane.showInputDialog(null, "Please enter the flight code number.");
+				}
+				if (flightCode != null && flightCode.matches(pattern))
+					{
+						//System.out.print(flightCode);
+						for (int i = 0; i < flights.size() && !flightCodeFound; i++)
+						{
+							if (flightCode.equals(flights.get(i).getFlightNumber()))
+								{
+									//System.out.println(flights.get(i).getFlightNumber());
+									flightCodeFound = true;
+									index = i;	
+								}
+						}
+					if (flightCodeFound)
+						{
+						flightsSorted.remove(index); // Removes the flight from the arraylist.
+						System.out.print(flightsSorted);
+						//totalFlights--;
+						writeToFile("f");
+						JOptionPane.showMessageDialog(null,"The flight " + flightCode + " was successfully deleted.");
+						}
+					else 
+						{
+						JOptionPane.showMessageDialog(null,"Flight code does not exist.");
+						deleteAFlight();
+						}
+
+					}
+			}
+	}
+	
 	//Gross validation
 	public static boolean validateDetail(int whichDetail, String detail) throws IOException
 	{
@@ -498,8 +544,8 @@ public class CS4092Project4Group10
 					System.out.print("4");
 					break;
 				case 5:
-					//deleteAFlight(args);
-					System.out.print("5");
+					deleteAFlight();
+					//System.out.print("5");
 					break;
 				case 6:
 					addFlight();
