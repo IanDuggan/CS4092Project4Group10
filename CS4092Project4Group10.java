@@ -16,6 +16,8 @@ public class CS4092Project4Group10
 		readFile = readFilesIntoArrayLists();
 		if (readFile)
 		{
+			bubbleSort("a");
+			bubbleSort("f");
 			writeToFile("a");
 			writeToFile("f");
 			menu();
@@ -338,18 +340,22 @@ public class CS4092Project4Group10
 		}
 	}
 	
-	public static void displayFlightDetails() throws IOException
+	public static void displayFlightDetails(boolean withDate) throws IOException
 	{
 		String airportCode1 = "";
 		String airportCode2 = "";
+		String date = "";
 		String tempArray [];
 		boolean airportCode1Found = false;
 		boolean airportCode2Found = false;
 		String pattern = "[A-Z]{3}";
 		String input = "";
-		while ((airportCode1 != null && airportCode2 != null) && ((!(airportCode1.matches(pattern))) || (!(airportCode2.matches(pattern)))))
+		while ((airportCode1 != null && airportCode2 != null && date != null) && ((!(airportCode1.matches(pattern))) || (!(airportCode2.matches(pattern)))))
 		{
-			airportCode1 = JOptionPane.showInputDialog(null, "Please enter the code of the departing airport.");
+			if (!(airportCode1.matches(pattern)))
+			{
+				airportCode1 = JOptionPane.showInputDialog(null, "Please enter the code of the departing airport.");
+			}
 			while (airportCode1 != null && (!(airportCode1.matches(pattern))))
 			{
 				JOptionPane.showMessageDialog(null, "Invalid airport code selected. Please enter the code capitalised and three characters long, eg 'BHD'.");
@@ -365,44 +371,79 @@ public class CS4092Project4Group10
 				}
 				if (airportCode2 == null)
 				{
+					airportCode1 = "";
 					airportCode2 = "";
 				}	
 				else if (airportCode2 != null && airportCode1.matches(pattern) && (airportCode2.matches(pattern)))
 				{
-					System.out.println("Entered if statement.");
 					for (int i = 0; i < airports.size() && !(airportCode1Found && airportCode2Found); i++) // Searching for the airports.
 					{
 						System.out.println(airports.get(i).getAirportCode());
 						if (airportCode1.equals(airports.get(i).getAirportCode()))
 						{
 							airportCode1Found = true;
-							System.out.println("Airport code 1 was found.");
 						}
 						if (airportCode2.equals(airports.get(i).getAirportCode()))
 						{
 							airportCode2Found = true;
-							System.out.println("Airport code 2 was found.");
 						}
 					}
-					if (airportCode1Found && airportCode2Found)
+					if (airportCode1Found && airportCode2Found && date != null)
 					{
-						System.out.print("both codes were found.");
-						boolean bothFound = false;
-						String display = "";
-						display += "FNo.     Dep   Arr  DepT  ArrT   Days     DDate        ADate\n";
-						for (int i = 0; i < flights.size(); i++)
+						if (withDate)
 						{
-							if (airportCode1.equals(flights.get(i).getDepartingAirport()) && airportCode2.equals(flights.get(i).getArrivingAirport()))
+							date = JOptionPane.showInputDialog(null,"Please enter the date of the flight(s).");
+							boolean validDate = isValidDate(date);
+							while (date != null && !validDate)
 							{
-								bothFound = true;
-								display += flights.get(i).toString() + "\n";
+								JOptionPane.showMessageDialog(null,"Invalid date entered. Please use the format dd/mm/yyyy.");
+								date = JOptionPane.showInputDialog(null,"Please enter the date of the flight(s).");
+							}
+							if (date == null)
+							{
+								airportCode2 = "";
+								date = "";
+							}
+							if (validDate)
+							{
+								boolean allFound = false;
+								String display = "";
+								display += "FNo.     Dep   Arr  DepT  ArrT   Days     DDate        ADate\n";
+								for (int i = 0; i < flights.size(); i++)
+								{
+									if (airportCode1.equals(flights.get(i).getDepartingAirport()) && airportCode2.equals(flights.get(i).getArrivingAirport()) && doesDateExist(date,i))
+									{
+										allFound = true;
+										display += flights.get(i).toString() + "\n";
+									}
+								}
+								if (!allFound)
+								{
+									display += "There are no records currently of any flights with the airports you entered.\n";
+								}
+								JOptionPane.showMessageDialog(null,display);
 							}
 						}
-						if (!bothFound)
+						else
 						{
-							display += "There are no records currently of any flights with the airports you entered.\n";
+							boolean bothFound = false;
+							String display = "";
+							display += "FNo.     Dep   Arr  DepT  ArrT   Days     DDate        ADate\n";
+							for (int i = 0; i < flights.size(); i++)
+							{
+								if (airportCode1.equals(flights.get(i).getDepartingAirport()) && airportCode2.equals(flights.get(i).getArrivingAirport()))
+								{
+									bothFound = true;
+									display += flights.get(i).toString() + "\n";
+								}
+							}
+							if (!bothFound)
+							{
+								display += "There are no records currently of any flights with the airports you entered.\n";
+							}
+							JOptionPane.showMessageDialog(null,display);
 						}
-						JOptionPane.showMessageDialog(null,display);
+						
 					}
 				}
 			}
@@ -441,7 +482,6 @@ public class CS4092Project4Group10
 					if (flightCodeFound)
 						{
 						flightsSorted.remove(index); // Removes the flight from the arraylist.
-						System.out.print(flightsSorted);
 						totalFlights--;
 						bubbleSort("f");
 						writeToFile("f");
@@ -496,6 +536,126 @@ public class CS4092Project4Group10
 		}
 		return validInput;
 	}
+	
+	public static boolean isValidDate(String userInput)
+	{
+		if (userInput == null)
+			return false;
+		String pattern = "[0-9]{2}/[0-9]{2}/[0-9]{4}";
+		String dateElements[];
+		int ddInt = 0, mmInt = 0, yyInt = 0;
+		int [] daysArray = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+		boolean dateIsValid = true;
+		userInput = userInput.trim();
+		dateElements = userInput.split("/");
+		if (userInput.matches(pattern))
+		{
+			ddInt = Integer.parseInt(dateElements[0]);
+			mmInt = Integer.parseInt(dateElements[1]);
+			yyInt = Integer.parseInt(dateElements[2]);
+		}
+		if (!(userInput.matches(pattern)))
+			dateIsValid = false;
+		else if ((ddInt == 0) || (mmInt == 0) || (yyInt == 0))
+			dateIsValid = false;
+		else if (mmInt > 12)
+			dateIsValid = false;
+		else if (ddInt > daysArray[mmInt - 1])
+			dateIsValid = false;
+		else if ((ddInt == 29) && (mmInt == 2) && (((yyInt % 4 == 0) && (yyInt % 100 != 0)) || (yyInt % 400 == 0)))
+			dateIsValid = true;
+		return dateIsValid;
+	}
+	
+	public static boolean doesDateExist(String dateChosen, int flightIndex)
+	{
+		boolean dateExists = false;
+		String [] dateParts = dateChosen.split("/");
+		int d = Integer.parseInt(dateParts[0]);
+		int m = Integer.parseInt(dateParts[1]);
+		int y = Integer.parseInt(dateParts[2]);
+		if (dates(dateChosen,flights.get(flightIndex).getStartDate(),flights.get(flightIndex).getEndDate()))
+		{
+			int dayOfWeek = convertDateToWeekDay(d,m,y);
+			String weekDays = flights.get(flightIndex).getDaysOfWeek();
+			switch (dayOfWeek)
+			{
+				case 0: if (weekDays.substring(dayOfWeek,dayOfWeek + 1).equals("M")) dateExists = true; break;
+				case 1: if (weekDays.substring(dayOfWeek,dayOfWeek + 1).equals("T")) dateExists = true; break;
+				case 2: if (weekDays.substring(dayOfWeek,dayOfWeek + 1).equals("W")) dateExists = true; break;
+				case 3: if (weekDays.substring(dayOfWeek,dayOfWeek + 1).equals("T")) dateExists = true; break;
+				case 4: if (weekDays.substring(dayOfWeek,dayOfWeek + 1).equals("F")) dateExists = true; break;
+				case 5: if (weekDays.substring(dayOfWeek,dayOfWeek + 1).equals("S")) dateExists = true; break;
+				case 6: if (weekDays.substring(dayOfWeek,dayOfWeek + 1).equals("S")) dateExists = true; break;
+			}
+		}
+		return dateExists;
+	}
+	
+	public static boolean dates(String dateChosen, String startDate, String endDate)
+	{
+		boolean validStartDate = false, validEndDate = false;
+		boolean validDates = false;
+		if (isValidDate(startDate))
+			validStartDate = true;
+		else
+			return false;
+		if (isValidDate(endDate))
+			validEndDate = true;
+		else
+			return false;
+		
+		if (validStartDate && validEndDate)
+		{
+			GregorianCalendar aCalendar = new GregorianCalendar();
+			Date actualStartDate, actualEndDate, dateGiven;
+			DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+			
+			try
+			{
+				dateGiven = (Date) dateFormatter.parse(dateChosen);
+				actualStartDate = (Date) dateFormatter.parse(startDate);
+				actualEndDate = (Date) dateFormatter.parse(endDate);
+				
+				if (actualEndDate.compareTo(dateGiven) >= 0 && actualStartDate.compareTo(dateGiven) <= 0) // Ensures the ending date is after the starting date otherwise the dates are false.
+				{
+					validDates = true;
+				}	
+				else
+				{
+					return false;
+				}
+			}
+			catch (ParseException pe)
+			{
+				System.out.println("Unable to format one or more dates");
+				return false;
+			}
+		}
+		return validDates;
+	}
+	
+	public static int convertDateToWeekDay(int d, int m, int y)
+	{
+		String result = ""; 
+		int a, b, dayOfWeek;
+		if (m == 1 || m == 2)
+		{
+			m += 12; 
+			y -=  1;
+		}
+		a = y % 100;  
+		b = y / 100;
+		dayOfWeek = ((d + (((m + 1) * 26) / 10) + a + (a / 4) + (b / 4)) + (5 * b)) % 7;
+		switch(dayOfWeek)
+		{
+			case 0: dayOfWeek = 5;  break;  case 1: dayOfWeek = 6;    break;
+			case 2: dayOfWeek = 0;  break;  case 3: dayOfWeek = 1;   break;
+			case 4: dayOfWeek = 2;  break;  case 5: dayOfWeek = 3;  break;
+			case 6: dayOfWeek = 4;  break;
+		}
+		return dayOfWeek;  
+	}	 
 	
 	public static void menu() throws IOException
 	{
@@ -552,11 +712,10 @@ public class CS4092Project4Group10
 					addFlight();
 					break;
 				case 7:
-					displayFlightDetails();
+					displayFlightDetails(false);
 					break;
 				case 8:
-					//displayFlightDetailsDate(args);
-					System.out.print("8");
+					displayFlightDetails(true);
 					break;
 				case 0:
 					JOptionPane.showMessageDialog(null, "Exiting.");
