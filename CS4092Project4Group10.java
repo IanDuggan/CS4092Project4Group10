@@ -151,7 +151,7 @@ public class CS4092Project4Group10
 							a = new Airport(airportName, airportCode);
 							airports.add(0,a);
 							airportFoundOrAdded = true;
-							//bubbleSort("a");
+							bubbleSort("a");
 							writeToFile("a");
 							JOptionPane.showMessageDialog(null, "The airport '" + airportName + "' with code '" + airportCode + "' has successfully been added to the file.");
 						}
@@ -442,7 +442,8 @@ public class CS4092Project4Group10
 						{
 						flightsSorted.remove(index); // Removes the flight from the arraylist.
 						System.out.print(flightsSorted);
-						//totalFlights--;
+						totalFlights--;
+						bubbleSort("f");
 						writeToFile("f");
 						JOptionPane.showMessageDialog(null,"The flight " + flightCode + " was successfully deleted.");
 						}
@@ -605,4 +606,53 @@ public class CS4092Project4Group10
 		}
 		printer.close();
 	}
+	
+	
+	
+	public static void bubbleSort(String fileChosen) throws IOException
+	{
+		int pass, comparison;
+		Flight temp;
+		Airport temp2;
+		boolean airportsChosen = false;
+		boolean flightsChosen = false;
+		if (fileChosen.equals("a"))
+		{
+			airportsChosen = true;
+		}
+		else if (fileChosen.equals("f"))
+		{
+			flightsChosen = true;
+		}
+		if (flightsChosen)
+		{
+			for (pass = 1; pass <= (flightsSorted.size() - 1); pass++)
+			{
+				for (comparison = 1; comparison <= (flightsSorted.size() - pass); comparison++)
+				{
+					if (((flightsSorted.get(comparison-1).getFlightNumber()).compareToIgnoreCase(flightsSorted.get(comparison).getFlightNumber()) > 0))
+					{
+						temp = flightsSorted.get(comparison -1);
+						flightsSorted.set((comparison - 1),flightsSorted.get(comparison));
+						flightsSorted.set((comparison), temp);
+					}
+				}
+			}
+		}
+		else if (airportsChosen)
+		{
+			for (pass = 1; pass <= (airports.size() - 1); pass++)
+			{
+				for (comparison = 1; comparison <= (airports.size() - pass); comparison++)
+				{
+					if ((airports.get(comparison - 1).getAirportName()).compareToIgnoreCase(airports.get(comparison).getAirportName()) > 0)
+					{
+						temp2 = airports.get(comparison - 1);
+						airports.set((comparison - 1), airports.get(comparison));
+						airports.set((comparison), temp2);
+					}
+				}
+			}
+		}
+	}	
 }

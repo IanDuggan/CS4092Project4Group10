@@ -1,6 +1,7 @@
 Aberdeen,ABZ
-Belfast,BHD
-Dublin,DUB
-New York,JFK
 Shannon,SNN
+Belfast,BHD
+New York,JFK
+Dublin,DUB
+Warsaw,WRS
 Venice,VCE
