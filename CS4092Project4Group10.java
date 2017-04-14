@@ -8,10 +8,8 @@ public class CS4092Project4Group10
 	public static ArrayList<Flight> flightsSorted;
 	public static ArrayList<Airport> airports;
 	public static int totalFlights;
-	public static boolean triesToExit;
 	public static void main(String [] args) throws IOException
 	{
-		triesToExit = false;
 		boolean readFile;
 		readFile = readFilesIntoArrayLists();
 		if (readFile)
@@ -21,7 +19,6 @@ public class CS4092Project4Group10
 			writeToFile("a");
 			writeToFile("f");
 			menu();
-			
 		}
 	}
 	public static boolean readFilesIntoArrayLists() throws IOException
@@ -50,7 +47,6 @@ public class CS4092Project4Group10
 				airports.add(a);
 	        }
 		    in.close();
-			
 			in = new Scanner(inputFile2);
 			String aLine,aChar,airportCode = "",question;
 			String wordArray [];
@@ -59,19 +55,22 @@ public class CS4092Project4Group10
 				aLine = in.nextLine();
 				Flight f = new Flight("", "", "", "", "", "", "", "");
 				wordArray = aLine.split(",");
-				aChar = wordArray[1];
-				for(int i = 0; i < airports.size(); i++)
-				{ 
-					airportCode = airports.get(i).getAirportCode();
-					if(airportCode.equals(aChar)) 
-					{
-						f = new Flight(wordArray[0], wordArray[1], wordArray[2], wordArray[3], wordArray[4], wordArray[5], wordArray[6], wordArray[7]);
-						flights.add(f);
-						totalFlights++;
-					}						
-					
+				if(!(aLine.equals(",,,,,,,"))){
+					aChar = wordArray[1];
+					for(int i = 0; i < airports.size(); i++)
+					{ 
+						airportCode = airports.get(i).getAirportCode();
+						if(airportCode.equals(aChar)) 
+						{
+							f = new Flight(wordArray[0], wordArray[1], wordArray[2], wordArray[3], wordArray[4], wordArray[5], wordArray[6], wordArray[7]);
+							flights.add(f);
+							
+							totalFlights++;
+						}						
+						
+					}
+					flightsSorted.add(f);
 				}
-				flightsSorted.add(f);
 			}
 			in.close();
 			return true;
@@ -92,7 +91,6 @@ public class CS4092Project4Group10
 		if (!(inputFile1.exists()))
 		{
 			PrintWriter printer = new PrintWriter("Airports.txt", "UTF-8");
-			//printer.print(a[1] + "," + a[2]);
 			printer.close();
 		}
 		else
@@ -160,10 +158,6 @@ public class CS4092Project4Group10
 					}
 				}
 			}
-			/*if (airportName == null)
-			{
-				menu();
-			}*/
 		}
 		menu();
 	}
@@ -237,7 +231,7 @@ public class CS4092Project4Group10
 							a = new Airport(airportName, airportCode);
 							airports.set(indexCode,a);
 							airportFoundOrEdited = true;
-							//bubbleSort("a");
+							bubbleSort("a");
 							writeToFile("a");
 							JOptionPane.showMessageDialog(null, "The airport name of code '" + airportCode + "' has successfully been changed to '" + airportName + "'.");
 						}
@@ -249,17 +243,13 @@ public class CS4092Project4Group10
 					}
 				}
 			}
-			/*if (airportCode == null)
-			{
-				menu();
-			}*/
 		}
 		menu();
 	}
 	
 	public static void addFlight() throws IOException
 	{
-		triesToExit = false;
+		boolean triesToExit = false, flightNumberFound = false;
 		String timeFormat = "\n\nNote: enter in 24hr format with numbers only, \neg 1300 for 1:00pm.";
 		String daysFormat = "\n\nNote: enter in format 'MTWTFSS' and enter a '-' \nfor inactive flight days, eg a flight only travelling on Tuesday\nis represented as '-T-----'.";
 		String dateFormat = "\n\nNote: enter in format dd/mm/yyyy.";
@@ -271,46 +261,89 @@ public class CS4092Project4Group10
 		boolean valid = true;
 		
 		String input = " ";
-		while(input != null && flightDetails[7] == null)
+		while(input != null && flightDetails[7] == null) 
 		{
 			//Every input box
+			flightNumberFound = false;
 			input = JOptionPane.showInputDialog(null, "Enter" + inputs[i]);
-			if (input != null)
+			if(input != null)
 			{
 				valid = validateDetail(i, input);
+				if(valid && i==0){
+					valid = validateDetail(8, input);	//Checking if flight code is already in file
+					if(!valid){
+						JOptionPane.showMessageDialog(null, "Flight entered already exists in file.");
+						flightNumberFound = true;
+					}
+				}
+				if(valid && (i==1 || i==2)){
+					valid = validateDetail(9, input);	//Checking if start airport code exists in file
+					if(!valid){
+						JOptionPane.showMessageDialog(null, "Airport does not exist in file.");
+						flightNumberFound = true;
+					}
+				}
+				if(valid && i==7){
+					valid = dates(flightDetails[6], flightDetails[6], input);	//Checking if dates are valid and if start date comes before end date
+					if(!valid){
+						JOptionPane.showMessageDialog(null, "One or both dates given are invalid, either the dates \nthemselves or the order they are in is incorrect.");
+						flightNumberFound = true;
+						i=6;
+					}
+				}
 			}				
-			else
-			{
+			else{
 				triesToExit = true;
-			}				
+			}
+			
 			if(!valid)
-			{	//Loop for invalid input
-				while(input != null && !valid)
+			{	
+				while(input != null && !valid)		//Loop for invalid input
 				{
-					JOptionPane.showMessageDialog(null, "Invalid" + inputs[i] + " \nPlease try again.");
+					if(!flightNumberFound){
+						JOptionPane.showMessageDialog(null, "Invalid" + inputs[i] + " \nPlease try again.");
+					}
 					input = JOptionPane.showInputDialog(null, "Enter" + inputs[i]);
-					if(input != null) 
+					if(input != null)
 					{
 						valid = validateDetail(i, input);
+						if(valid && i==0){
+							valid = validateDetail(8, input);
+							if(!valid){
+								JOptionPane.showMessageDialog(null, "Flight entered already exists in file.");
+								flightNumberFound = true;
+							}
+						}
+						if(valid && (i==1 || i==2)){
+							valid = validateDetail(9, input);
+							if(!valid){
+								JOptionPane.showMessageDialog(null, "Airport does not exist in file.");
+								flightNumberFound = true;
+							}
+						}
+						if(valid && i==7){
+							valid = dates(flightDetails[6], flightDetails[6], input);
+							if(!valid){
+								JOptionPane.showMessageDialog(null, "One or both dates given are invalid, either the dates \nthemselves or the order they are in is incorrect.");
+								flightNumberFound = true;
+								i=6;
+							}
+						}
 					}
-					else
-					{
+					else{
 						triesToExit = true;
 					}
 				}
 			} //Adds input to array
-			while(input != null && flightDetails[i] == null)
+			while(input != null && flightDetails[i] == null )
 			{
-				if(input != null)
-				{
+				if(input != null){
 					input = input.trim();
 				}
-				else
-				{
+				else{
 					triesToExit = true;
 				}
-				if(valid)
-				{
+				if(valid){
 					flightDetails[i] = input;
 				}
 			}
@@ -318,20 +351,18 @@ public class CS4092Project4Group10
 				i++;
 		}
 		//Assigns details to flight object, adds to arrayList and writes to file
-		if(input != null && flightDetails[7] != null && !triesToExit)
+		if(input != null && flightDetails[7] != null)
 		{
 			Flight f = new Flight(flightDetails[0], flightDetails[1], flightDetails[2], flightDetails[3], flightDetails[4], flightDetails[5], flightDetails[6], flightDetails[7]);
 			flightsSorted.add(f);
+			bubbleSort("f");
 			writeToFile("f");
 			JOptionPane.showMessageDialog(null, "Flight " + flightDetails[0] + " has successfully been added to flights list.");
 			menu();
 		}
-		//Determines where to go when user wants to exit
-		//Exiting from any point in the input menus bring up the first input menu 
-		//unless exiting from the first input menu.
-		if(triesToExit && i == 0)
-		{
-			triesToExit = false;
+		if(triesToExit && i == 0)		//Determines where to go when user wants to exit
+		{								//Exiting from any point in the input menus bring up the first input menu 
+			triesToExit = false;		//unless exiting from the first input menu.
 			menu();
 		}
 		else if(triesToExit)
@@ -378,7 +409,6 @@ public class CS4092Project4Group10
 				{
 					for (int i = 0; i < airports.size() && !(airportCode1Found && airportCode2Found); i++) // Searching for the airports.
 					{
-						System.out.println(airports.get(i).getAirportCode());
 						if (airportCode1.equals(airports.get(i).getAirportCode()))
 						{
 							airportCode1Found = true;
@@ -443,7 +473,6 @@ public class CS4092Project4Group10
 							}
 							JOptionPane.showMessageDialog(null,display);
 						}
-						
 					}
 				}
 			}
@@ -454,47 +483,43 @@ public class CS4092Project4Group10
 	
 	public static void deleteAFlight() throws IOException
 	{
-			
-			String flightCode = "";
-			boolean flightCodeFound = false;
-			String pattern = "([A-Z].*[0-9]+)|([0-9].*[A-Z]+)";
-			int index=0;
-			while ((flightCode != null) && ((!(flightCode.matches(pattern)))))
-			{
+		String flightCode = "";
+		boolean flightCodeFound = false;
+		String pattern = "([A-Z].*[0-9]+)|([0-9].*[A-Z]+)";
+		int index=0;
+		while ((flightCode != null) && ((!(flightCode.matches(pattern)))))
+		{
+			flightCode = JOptionPane.showInputDialog(null, "Please enter the flight code number.");
+			while (flightCode != null && (!(flightCode.matches(pattern)))){
+				JOptionPane.showMessageDialog(null, "Invalid flight code selected. Please enter the code capitalised with two characters and 4 digits, eg 'EI3000'.");
 				flightCode = JOptionPane.showInputDialog(null, "Please enter the flight code number.");
-				while (flightCode != null && (!(flightCode.matches(pattern))))
-				{
-					JOptionPane.showMessageDialog(null, "Invalid flight code selected. Please enter the code capitalised with two characters and 4 digits, eg 'EI3000'.");
-					flightCode = JOptionPane.showInputDialog(null, "Please enter the flight code number.");
-				}
-				if (flightCode != null && flightCode.matches(pattern))
-					{
-						//System.out.print(flightCode);
-						for (int i = 0; i < flights.size() && !flightCodeFound; i++)
-						{
-							if (flightCode.equals(flights.get(i).getFlightNumber()))
-								{
-									//System.out.println(flights.get(i).getFlightNumber());
-									flightCodeFound = true;
-									index = i;	
-								}
-						}
-					if (flightCodeFound)
-						{
-						flightsSorted.remove(index); // Removes the flight from the arraylist.
-						totalFlights--;
-						bubbleSort("f");
-						writeToFile("f");
-						JOptionPane.showMessageDialog(null,"The flight " + flightCode + " was successfully deleted.");
-						}
-					else 
-						{
-						JOptionPane.showMessageDialog(null,"Flight code does not exist.");
-						deleteAFlight();
-						}
-
-					}
 			}
+			if (flightCode != null && flightCode.matches(pattern)){
+				for (int i = 0; i < flightsSorted.size() && !flightCodeFound; i++)
+				{
+					if (flightCode.equals(flightsSorted.get(i).getFlightNumber()))
+					{
+						flightCodeFound = true;
+						index = i;	
+					}
+				}
+				if (flightCodeFound)
+				{
+					flightsSorted.remove(index); // Removes the flight from the arraylist.
+					totalFlights--;
+					bubbleSort("f");
+					writeToFile("f");
+					JOptionPane.showMessageDialog(null,"The flight " + flightCode + " was successfully deleted.");
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null,"Flight code does not exist.");
+					deleteAFlight();
+				}
+
+			}
+		}
+		menu();
 	}
 	
 	//Gross validation
@@ -510,29 +535,66 @@ public class CS4092Project4Group10
 			whichDetail = 6;
 		switch(whichDetail)
 		{
-			case 0: pattern = "[A-Z]{2}[0-9]{4}"; if(detail.matches(pattern)) {validInput = true;} else {validInput = false;}
-					break;
-			case 1: pattern = "[A-Z]{3}"; if(detail.matches(pattern)) {validInput = true;} else {validInput = false;}
-					break;
-			case 3: pattern = "[0-1]{1}[0-9]{1}[0-5]{1}[0-9]{1}|2[0-3]{1}[0-5]{1}[0-9]{1}"; if(detail.matches(pattern)) {validInput = true;} else {validInput = false; }
-					break;
-			//Pardon the grossness tried saving lines
-			case 5: String days = "MTWTFSS"; String aChar; detail = detail.toUpperCase(); validInput = true;
-					if (detail.length() == 7){ 
-						if(detail.matches("-------")) validInput = false;
-						else{for (int i = 0; i < days.length() && validInput; i++) {
+			case 0: 
+				pattern = "[A-Z]{2}[0-9]{4}"; 
+				if(detail.matches(pattern))
+					validInput = true;
+				else
+					validInput = false;
+				break;
+			case 1: 
+				pattern = "[A-Z]{3}"; 
+				if(detail.matches(pattern))
+					validInput = true;
+				else
+					validInput = false;
+				break;
+			case 3: 
+				pattern = "[0-1]{1}[0-9]{1}[0-5]{1}[0-9]{1}|2[0-3]{1}[0-5]{1}[0-9]{1}"; 
+				if(detail.matches(pattern))
+					validInput = true;
+				else
+					validInput = false; 
+				break;
+			case 5: 
+				String days = "MTWTFSS"; String aChar; detail = detail.toUpperCase(); validInput = true;
+				if (detail.length() == 7)
+				{
+					if(detail.matches("-------"))	// No days is now invalid
+						validInput = false;
+					else{
+						for (int i = 0; i < days.length() && validInput; i++) {
 							aChar = detail.substring(i, i + 1);
-							if ((!(aChar.equals("-"))) && (!(aChar.equals(days.substring(i, i + 1))))) // If the next character does not equal "-" and does not equal the relevant day, then return false.
-							validInput = false; 
-							}
-						}
+							if ((!(aChar.equals("-"))) && (!(aChar.equals(days.substring(i, i + 1))))) 
+								validInput = false; 	
+						}								// ^If the next character does not equal "-" and does 
+					}									// not equal the relevant day, then return false.
+				}
+				else 
+					validInput = false; 	
+				break;
+			case 6: 
+				validInput = isValidDate(detail);
+				break;
+			case 8:
+				boolean aMatch; validInput = true;
+				for(int k=0; k<flights.size() && validInput; k++)
+				{
+					if(flights.get(k).getFlightNumber().equals(detail)){
+						validInput = false;
 					}
-					else validInput = false; 	
-					break;
-			case 6: pattern = "[0-9]{2}/[0-9]{2}/[0-9]{4}"; if(detail.matches(pattern)) {validInput = true;} else {validInput = false;}
-					break;
-			default:validInput = false;
-					break;
+				}
+				break;
+			case 9:
+				validInput = false;
+				for(int i=0; i<airports.size() && !validInput; i++){
+					if(airports.get(i).getAirportCode().equals(detail))
+						validInput = true;
+				}
+				break;
+			default:
+				validInput = false;
+				break;
 		}
 		return validInput;
 	}
@@ -628,7 +690,7 @@ public class CS4092Project4Group10
 			}
 			catch (ParseException pe)
 			{
-				System.out.println("Unable to format one or more dates");
+				JOptionPane.showMessageDialog(null, "Unable to format one or more dates.");
 				return false;
 			}
 		}
@@ -659,7 +721,7 @@ public class CS4092Project4Group10
 	
 	public static void menu() throws IOException
 	{
-		triesToExit = false;
+		readFilesIntoArrayLists();
 		boolean valid = false;
 		String pattern = "[0-8]{1}";
 		String input = "";
@@ -813,5 +875,6 @@ public class CS4092Project4Group10
 				}
 			}
 		}
-	}	
+	}
+
 }
