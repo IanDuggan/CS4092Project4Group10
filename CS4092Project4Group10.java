@@ -274,7 +274,7 @@ public class CS4092Project4Group10
 						}
 					if (airportCodeFound)
 						{
-						airports.remove(index); // Removes the airport from the arraylist.
+						airports.remove(index);
 						System.out.print(airports);
 						//totalAirports--;
 						writeToFile("a");
@@ -282,7 +282,7 @@ public class CS4092Project4Group10
 						}
 					else 
 						{
-						JOptionPane.showMessageDialog(null,"Airport code does not exist.");
+						JOptionPane.showMessageDialog(null,"Airport code not found.");
 						deleteAnAirport();
 						}
 
