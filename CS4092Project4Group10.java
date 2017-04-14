@@ -247,6 +247,50 @@ public class CS4092Project4Group10
 		menu();
 	}
 	
+		public static void deleteAnAirport() throws IOException
+	{
+			
+			String airportCode = "";
+			boolean airportCodeFound = false;
+			String pattern = "[A-Z]{3}";
+			int index=0;
+			while ((airportCode != null) && ((!(airportCode.matches(pattern)))))
+			{
+				airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code number of the airport you would like to remove.");
+				while (airportCode != null && (!(airportCode.matches(pattern))))
+				{
+					JOptionPane.showMessageDialog(null, "Invalid airport code selected. Please enter the code capitalised with 3 characters, eg 'DUB'.");
+					airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code.");
+				}
+				if (airportCode != null && airportCode.matches(pattern))
+					{
+						for (int i = 1; i < airports.size() && !airportCodeFound; i++)
+						{
+							if (airportCode.equals(airports.get(i).getAirportCode()))
+								{
+									airportCodeFound = true;
+									index = i;	
+								}
+						}
+					if (airportCodeFound)
+						{
+						airports.remove(index); // Removes the airport from the arraylist.
+						System.out.print(airports);
+						//totalAirports--;
+						writeToFile("a");
+						JOptionPane.showMessageDialog(null,"The airport " + airportCode + " was successfully deleted.");
+						}
+					else 
+						{
+						JOptionPane.showMessageDialog(null,"Airport code does not exist.");
+						deleteAnAirport();
+						}
+
+					}
+			}
+	}
+	
+	
 	public static void addFlight() throws IOException
 	{
 		boolean triesToExit = false, flightNumberFound = false;
