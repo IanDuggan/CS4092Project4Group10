@@ -221,14 +221,12 @@ public class CS4092Project4Group10
 								airportName = airportName.trim();
 							}								
 						}
-						if (airportName == null)
-						{
+						if (airportName == null){
 							airportFoundOrEdited = false;
 						}
 						if (airportName != null && airportCode != null)
 						{
-							Airport a;
-							a = new Airport(airportName, airportCode);
+							Airport a = new Airport(airportName, airportCode);
 							airports.set(indexCode,a);
 							airportFoundOrEdited = true;
 							bubbleSort("a");
@@ -249,62 +247,166 @@ public class CS4092Project4Group10
 	
 	public static void deleteAnAirport() throws IOException
 	{
-	String airportCode = "";
-	boolean airportCodeFound = false;
-	String pattern = "[A-Z]{3}";
-	int index = 0;
-	while ((airportCode != null) && ((!(airportCode.matches(pattern)))))
-	{
-		airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code number of the airport you would like to remove.");
-		while (airportCode != null && (!(airportCode.matches(pattern))))
+		String airportCode = "";
+		boolean airportCodeFound = false;
+		String pattern = "[A-Z]{3}";
+		int index = 0;
+		while ((airportCode != null) && ((!(airportCode.matches(pattern)))))
 		{
-			JOptionPane.showMessageDialog(null, "Invalid airport code selected. Please enter the code capitalised with 3 characters, eg 'DUB'.");
-			airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code.");
-		}
-		if (airportCode != null && airportCode.matches(pattern))
-		{
-			for (int i = 1; i < airports.size() && !airportCodeFound; i++)
+			airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code number of the airport you would like to remove.");
+			while (airportCode != null && (!(airportCode.matches(pattern))))
 			{
-				if (airportCode.equals(airports.get(i).getAirportCode()))
+				JOptionPane.showMessageDialog(null, "Invalid airport code selected. Please enter the code capitalised with 3 characters, eg 'DUB'.");
+				airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code.");
+			}
+			if (airportCode != null && airportCode.matches(pattern))
+			{
+				for (int i = 1; i < airports.size() && !airportCodeFound; i++)
 				{
-					airportCodeFound = true;
-					index = i;	
+					if (airportCode.equals(airports.get(i).getAirportCode()))
+					{
+						airportCodeFound = true;
+						index = i;	
+					}
+				}
+				if (airportCodeFound)
+				{
+					airports.remove(index);
+					writeToFile("a");
+					JOptionPane.showMessageDialog(null,"The airport " + airportCode + " was successfully deleted.");
+				}
+				else 
+				{
+					JOptionPane.showMessageDialog(null,"Airport code not found.");
+					deleteAnAirport();
 				}
 			}
-			if (airportCodeFound)
+		}
+		menu();
+	}
+	
+	public static void editFlightDetails() throws IOException
+	{
+		boolean valid = false, errMsg = true, flightFoundOrEdited = false, validDates = false;
+		String flightCode = " ", editedDays = " ", date = " ", codePattern = "[A-Z]{2}[0-9]{4}";
+		String dateInput[] = {"start", "end"}, dates[] = new String[2];
+		
+		while(flightCode != null && (!flightFoundOrEdited || !validDates))
+		{
+			flightCode = JOptionPane.showInputDialog(null, "Enter the flight code for the details you wish to edit.");
+			if(flightCode != null)
+				flightCode = flightCode.trim();
+			while(flightCode != null && (!(flightCode.matches(codePattern))))
 			{
-				airports.remove(index);
-				writeToFile("a");
-				JOptionPane.showMessageDialog(null,"The airport " + airportCode + " was successfully deleted.");
+				JOptionPane.showMessageDialog(null, "Invalid flight code supplied. \n\nNote: enter two capitalised letters \nfollowed by the four digits, eg 'EI3000'.");
+				flightCode = JOptionPane.showInputDialog(null, "Enter the flight code for the details you wish to edit.");
+				if(flightCode != null)
+					flightCode = flightCode.trim();
 			}
-			else 
+			if(flightCode != null && flightCode.matches(codePattern))
 			{
-				JOptionPane.showMessageDialog(null,"Airport code not found.");
-				deleteAnAirport();
+				int index = 0;
+				for(int i=0; i<flightsSorted.size() && !flightFoundOrEdited; i++){
+					if(flightsSorted.get(i).getFlightNumber().equals(flightCode)){
+						flightFoundOrEdited = true;
+						index = i;
+					}
+				}
+				if(flightFoundOrEdited)
+				{
+					editedDays = " ";
+					while(editedDays != null && !validDates)
+					{
+						editedDays = JOptionPane.showInputDialog(null, "Enter the new active days of flight " + flightCode + ".");
+						if(editedDays != null){
+							editedDays = editedDays.trim();
+							valid = validateDetail(5, editedDays);
+						}
+						while(editedDays != null && !valid){
+							JOptionPane.showMessageDialog(null, "Invalid format of days entered. \n\nNote: enter in format MTWTFSS with a '-'\n to represent an inactive day.");
+							editedDays = JOptionPane.showInputDialog(null, "Enter the new active days of flight " + flightCode + ".");
+							if(editedDays != null){
+								editedDays = editedDays.trim();
+								valid = validateDetail(5, editedDays);
+							}
+						}
+						if(editedDays != null){
+							int count = 0;
+							date = " ";
+							while(date != null && !validDates)
+							{
+								date = JOptionPane.showInputDialog(null, "Enter the new "+ dateInput[count] +" date flight is active.");
+								if(date != null){
+									date = date.trim();
+									valid = validateDetail(6, date);
+								}
+								while(date != null && !valid){
+									JOptionPane.showMessageDialog(null, "Invalid " + dateInput[count] + " date entered. \n\nNote: enter in format dd/mm/yyyy.");
+									date = JOptionPane.showInputDialog(null, "Enter the new "+ dateInput[count] +" date flight is active.");
+									if(date != null){
+										date = date.trim();
+										valid = validateDetail(6, date);
+									}
+								}
+								if(date != null)
+								{
+									dates[count] = date;
+									count++;
+									if(count == 2)
+									{
+										validDates = dates(dates[0], dates[0], dates[1]);
+										if(!validDates)
+										{
+											JOptionPane.showMessageDialog(null, "Dates given are invalid. Please ensure \nthat start date comes before end date.");
+											count = 0;
+											date = " ";
+											dates[1] = "";
+										}
+									}
+								}
+								else if(date == null && count == 1){
+									count = 0;
+									date = " ";
+								}
+								else
+									flightFoundOrEdited = false;
+							}
+						}
+						else{
+							flightFoundOrEdited = false;
+						}
+						if(flightCode != null && editedDays != null && validDates){
+							flightsSorted.get(index).setDaysOfWeek(editedDays);
+							flightsSorted.get(index).setStartDate(dates[0]);
+							flightsSorted.get(index).setEndDate(dates[1]);
+							writeToFile("f");
+							JOptionPane.showMessageDialog(null, "The details of flight " + flightCode + " have successfully\n been changed to the following details:\n\n" + 
+									editedDays + " " + dates[0] + " " + dates[1]);
+						}
+						flightFoundOrEdited = true;
+					}
+				}
+				else
+					JOptionPane.showMessageDialog(null,"The flight selected does not exist in file.");
 			}
 		}
+		menu();
 	}
-	menu();
-}
-	
 	
 	public static void addFlight() throws IOException
 	{
-		boolean triesToExit = false, flightNumberFound = false;
+		boolean triesToExit = false, flightNumberFound = false, valid = true;
 		String timeFormat = "\n\nNote: enter in 24hr format with numbers only, \neg 1300 for 1:00pm.";
 		String daysFormat = "\n\nNote: enter in format 'MTWTFSS' and enter a '-' \nfor inactive flight days, eg a flight only travelling on Tuesday\nis represented as '-T-----'.";
-		String dateFormat = "\n\nNote: enter in format dd/mm/yyyy.";
+		String dateFormat = "\n\nNote: enter in format dd/mm/yyyy.", input = " ";
 		//Made a string array of flight details to cycle through
 		String inputs[] = {" flight code.", " start airport code.", " destination airport code.", " start time." + timeFormat,
 							" arrival time.", " days of travel." + daysFormat, " start date flight is active." + dateFormat, " end date flight is active." + dateFormat};
 		String flightDetails[] = new String[8];
 		int i = 0;
-		boolean valid = true;
 		
-		String input = " ";
 		while(input != null && flightDetails[7] == null) 
-		{
-			//Every input box
+		{	//Every input box
 			flightNumberFound = false;
 			input = JOptionPane.showInputDialog(null, "Enter" + inputs[i]);
 			if(input != null)
@@ -333,17 +435,14 @@ public class CS4092Project4Group10
 					}
 				}
 			}				
-			else{
+			else
 				triesToExit = true;
-			}
-			
 			if(!valid)
 			{	
 				while(input != null && !valid)		//Loop for invalid input
 				{
-					if(!flightNumberFound){
+					if(!flightNumberFound)
 						JOptionPane.showMessageDialog(null, "Invalid" + inputs[i] + " \nPlease try again.");
-					}
 					input = JOptionPane.showInputDialog(null, "Enter" + inputs[i]);
 					if(input != null)
 					{
@@ -371,22 +470,18 @@ public class CS4092Project4Group10
 							}
 						}
 					}
-					else{
+					else
 						triesToExit = true;
-					}
 				}
 			} //Adds input to array
-			while(input != null && flightDetails[i] == null )
+			while(input != null && flightDetails[i] == null)
 			{
-				if(input != null){
+				if(input != null)
 					input = input.trim();
-				}
-				else{
-					triesToExit = true;
-				}
-				if(valid){
+				else
+					triesToExit = true
+				if(valid)
 					flightDetails[i] = input;
-				}
 			}
 			if(flightDetails[i] != null)
 				i++;
@@ -401,15 +496,12 @@ public class CS4092Project4Group10
 			JOptionPane.showMessageDialog(null, "Flight " + flightDetails[0] + " has successfully been added to flights list.");
 			menu();
 		}
-		if(triesToExit && i == 0)		//Determines where to go when user wants to exit
-		{								//Exiting from any point in the input menus bring up the first input menu 
-			triesToExit = false;		//unless exiting from the first input menu.
-			menu();
+		if(triesToExit && i == 0){		//Determines where to go when user wants to exit								
+			triesToExit = false;		//Exiting from any point in the input menus bring up the first input menu 
+			menu();						//unless exiting from the first input menu.
 		}
 		else if(triesToExit)
-		{
 			addFlight();
-		}
 	}
 	
 	public static void displayFlightDetails(boolean withDate) throws IOException
@@ -441,8 +533,7 @@ public class CS4092Project4Group10
 					JOptionPane.showMessageDialog(null, "Invalid airport code selected. Please enter the code capitalised and three characters long, eg 'BHD'.");
 					airportCode2 = JOptionPane.showInputDialog(null, "Please enter the code of the departing airport.");
 				}
-				if (airportCode2 == null)
-				{
+				if (airportCode2 == null){
 					airportCode1 = "";
 					airportCode2 = "";
 				}	
@@ -470,8 +561,7 @@ public class CS4092Project4Group10
 								JOptionPane.showMessageDialog(null,"Invalid date entered. Please use the format dd/mm/yyyy.");
 								date = JOptionPane.showInputDialog(null,"Please enter the date of the flight(s).");
 							}
-							if (date == null)
-							{
+							if (date == null){
 								airportCode2 = "";
 								date = "";
 							}
@@ -488,15 +578,13 @@ public class CS4092Project4Group10
 										display += flights.get(i).toString() + "\n";
 									}
 								}
-								if (!allFound)
-								{
+								if (!allFound){
 									display += "There are no records currently of any flights with the airports you entered on that date.\n";
 								}
 								JOptionPane.showMessageDialog(null,display);
 							}
 						}
-						else
-						{
+						else{
 							boolean bothFound = false;
 							String display = "";
 							display += "FNo.     Dep   Arr  DepT  ArrT   Days     DDate        ADate\n";
@@ -508,8 +596,7 @@ public class CS4092Project4Group10
 									display += flights.get(i).toString() + "\n";
 								}
 							}
-							if (!bothFound)
-							{
+							if (!bothFound){
 								display += "There are no records currently of any flights with the airports you entered.\n";
 							}
 							JOptionPane.showMessageDialog(null,display);
@@ -551,18 +638,15 @@ public class CS4092Project4Group10
 					writeToFile("f");
 					JOptionPane.showMessageDialog(null,"The flight " + flightCode + " was successfully deleted.");
 				}
-				else
-				{
+				else{
 					JOptionPane.showMessageDialog(null,"Flight code does not exist.");
 					deleteAFlight();
 				}
-
 			}
 		}
 		menu();
 	}
 	
-	//Gross validation
 	public static boolean validateDetail(int whichDetail, String detail) throws IOException
 	{
 		boolean validInput = false;
@@ -787,7 +871,6 @@ public class CS4092Project4Group10
 					valid = true;
 			}
 		}
-		
 		if (valid)
 		{
 			int number = Integer.parseInt(input);
@@ -867,8 +950,6 @@ public class CS4092Project4Group10
 		printer.close();
 	}
 	
-	
-	
 	public static void bubbleSort(String fileChosen) throws IOException
 	{
 		int pass, comparison;
@@ -915,5 +996,4 @@ public class CS4092Project4Group10
 			}
 		}
 	}
-
 }
