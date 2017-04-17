@@ -110,7 +110,6 @@ public class CS4092Project4Group10
 					{
 						airportName = airportName.trim();
 					}
-						
 				}
 				if (airportName != null && airportName.matches(pattern1))
 				{
@@ -479,7 +478,7 @@ public class CS4092Project4Group10
 				if(input != null)
 					input = input.trim();
 				else
-					triesToExit = true
+					triesToExit = true;
 				if(valid)
 					flightDetails[i] = input;
 			}
@@ -886,8 +885,7 @@ public class CS4092Project4Group10
 					deleteAnAirport();
 					break;
 				case 4:
-					//editFlightDetails(args);
-					System.out.print("4");
+					editFlightDetails();
 					break;
 				case 5:
 					deleteAFlight();
