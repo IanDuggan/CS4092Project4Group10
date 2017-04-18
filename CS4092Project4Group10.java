@@ -252,10 +252,10 @@ public class CS4092Project4Group10
 		int index = 0;
 		while ((airportCode != null) && ((!(airportCode.matches(pattern)))))
 		{
-			airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code number of the airport you would like to remove.");
+			airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code of the airport you would like to remove.");
 			while (airportCode != null && (!(airportCode.matches(pattern))))
 			{
-				JOptionPane.showMessageDialog(null, "Invalid airport code selected. Please enter the code capitalised with 3 characters, eg 'DUB'.");
+				JOptionPane.showMessageDialog(null, "Invalid airport code selected. \n\nNote: enter the code capitalised with 3 characters, eg 'DUB'.");
 				airportCode = JOptionPane.showInputDialog(null, "Please enter the airport code.");
 			}
 			if (airportCode != null && airportCode.matches(pattern))
@@ -394,22 +394,26 @@ public class CS4092Project4Group10
 	
 	public static void addFlight() throws IOException
 	{
-		boolean triesToExit = false, flightNumberFound = false, valid = true;
+		boolean triesToExit = false, flightNumberFound = false;
 		String timeFormat = "\n\nNote: enter in 24hr format with numbers only, \neg 1300 for 1:00pm.";
 		String daysFormat = "\n\nNote: enter in format 'MTWTFSS' and enter a '-' \nfor inactive flight days, eg a flight only travelling on Tuesday\nis represented as '-T-----'.";
-		String dateFormat = "\n\nNote: enter in format dd/mm/yyyy.", input = " ";
+		String dateFormat = "\n\nNote: enter in format dd/mm/yyyy.";
 		//Made a string array of flight details to cycle through
 		String inputs[] = {" flight code.", " start airport code.", " destination airport code.", " start time." + timeFormat,
-							" arrival time.", " days of travel." + daysFormat, " start date flight is active." + dateFormat, " end date flight is active." + dateFormat};
+							" arrival time." + timeFormat, " days of travel." + daysFormat, " start date flight is active." + dateFormat, " end date flight is active." + dateFormat};
 		String flightDetails[] = new String[8];
 		int i = 0;
+		boolean valid = true;
 		
+		String input = " ";
 		while(input != null && flightDetails[7] == null) 
-		{	//Every input box
+		{
+			//Every input box
 			flightNumberFound = false;
 			input = JOptionPane.showInputDialog(null, "Enter" + inputs[i]);
 			if(input != null)
 			{
+				input = input.trim();
 				valid = validateDetail(i, input);
 				if(valid && i==0){
 					valid = validateDetail(8, input);	//Checking if flight code is already in file
@@ -434,17 +438,20 @@ public class CS4092Project4Group10
 					}
 				}
 			}				
-			else
+			else{
 				triesToExit = true;
+			}
 			if(!valid)
 			{	
 				while(input != null && !valid)		//Loop for invalid input
 				{
-					if(!flightNumberFound)
+					if(!flightNumberFound){
 						JOptionPane.showMessageDialog(null, "Invalid" + inputs[i] + " \nPlease try again.");
+					}
 					input = JOptionPane.showInputDialog(null, "Enter" + inputs[i]);
 					if(input != null)
 					{
+						input = input.trim();
 						valid = validateDetail(i, input);
 						if(valid && i==0){
 							valid = validateDetail(8, input);
@@ -469,18 +476,13 @@ public class CS4092Project4Group10
 							}
 						}
 					}
-					else
+					else{
 						triesToExit = true;
+					}
 				}
 			} //Adds input to array
-			while(input != null && flightDetails[i] == null)
-			{
-				if(input != null)
-					input = input.trim();
-				else
-					triesToExit = true;
-				if(valid)
-					flightDetails[i] = input;
+			if(input != null){
+				flightDetails[i] = input;
 			}
 			if(flightDetails[i] != null)
 				i++;
@@ -493,14 +495,15 @@ public class CS4092Project4Group10
 			bubbleSort("f");
 			writeToFile("f");
 			JOptionPane.showMessageDialog(null, "Flight " + flightDetails[0] + " has successfully been added to flights list.");
-			menu();
+			menu();		
 		}
-		if(triesToExit && i == 0){		//Determines where to go when user wants to exit								
+		if(triesToExit && i == 0){		//Determines where to go when user wants to exit
 			triesToExit = false;		//Exiting from any point in the input menus bring up the first input menu 
 			menu();						//unless exiting from the first input menu.
 		}
-		else if(triesToExit)
+		else if(triesToExit){
 			addFlight();
+		}
 	}
 	
 	public static void displayFlightDetails(boolean withDate) throws IOException
