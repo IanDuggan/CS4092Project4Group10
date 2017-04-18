@@ -604,6 +604,13 @@ public class CS4092Project4Group10
 							JOptionPane.showMessageDialog(null,display);
 						}
 					}
+					else{
+						JOptionPane.showMessageDialog(null, "One or more airports does not exist in file.");
+						if(withDate)
+							displayFlightDetails(true);
+						else
+							displayFlightDetails(false);
+					}
 				}
 			}
 		}
@@ -871,6 +878,8 @@ public class CS4092Project4Group10
 				input = input.trim();
 				if(input.matches(pattern))
 					valid = true;
+				else
+					JOptionPane.showMessageDialog(null, "Invalid input.");
 			}
 		}
 		if (valid)
